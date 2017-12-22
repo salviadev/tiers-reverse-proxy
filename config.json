@@ -1,0 +1,5 @@
+{
+    "port": 7500,
+    "target": "http://sercentos1",
+    "password": "salvia"
+}
