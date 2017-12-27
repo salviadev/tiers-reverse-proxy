@@ -1,9 +1,9 @@
 import * as  util from 'util';
 import * as  http from 'http';
 import * as fs from 'fs';
-// const util = require('util');
+import { authenticateProxy } from './lib/authenticate';
 
-// const http = require('http');
+
 const url = require('url');
 const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer();
@@ -13,20 +13,17 @@ if (fs.existsSync('/config.json')) {
     let cfg = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
 }
 
-const port = process.env.REVERSE_PROXY_PORT || cfg.port || 7500;
+const port = process.env.PORT || process.env.REVERSE_PROXY_PORT || cfg.port || 7500;
 const host = process.env.REFERENTIEL_TIERS_ADDRESS || cfg.host || 'http://sercentos1';
-const adminPassword = process.env.REFERENTIEL_TIERS__ADMIN_PASSWORD  || cfg.password || 'salvia';
 
-const authorization = 'Basic ' + new Buffer('admin:' + adminPassword).toString('base64');
 const routes: string[] = ['referentiel-tiers', 'account-management', 'document-collect', 'private']
 
 function reverseProxy(route: string, req: http.IncomingMessage, res: http.ServerResponse) {
-    proxy.web(req, res, { target: host, changeOrigin: true, headers: { Authorization: authorization } });
+    proxy.web(req, res, { target: host, changeOrigin: true });
 }
 
 
 proxy.on('proxyRes', function (proxyRes: any, req: http.IncomingMessage, res: http.ServerResponse) {
-    // console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, null, 2));
     delete proxyRes.headers['x-frame-options'];
 });
 
@@ -41,9 +38,11 @@ const server = http.createServer((req, res) => {
         if (regex.test(path)) {
             routeFound = route;
         }
-    })
+    });
     if (routeFound) {
         return reverseProxy(routeFound, req, res);
+    } else if (/^\/authenticate\/.*/.test(path)) {
+        return authenticateProxy(host, path, req, res);
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end(util.format('Not found %s %s.', req.method, path));

@@ -20,7 +20,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "http-proxy": "^1.16.2",
-    "node-http-proxy": "latest"
+    "http-proxy": "^1.16.2"
   }
 }
