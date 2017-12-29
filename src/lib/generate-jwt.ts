@@ -26,8 +26,20 @@ function urlBase64Decode(str: string): string {
     return decodeURIComponent(escape(new Buffer(output, 'base64').toString('binary')));
 }
 
-export function generateJWt(baseUri: string, tenant: string, userName: string, password: string): Promise<any> {
+export function generateJWt(baseUri: string, tenant: string, userName: string, password: string, token: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
+        if (token) {
+            // console.log(token);
+            let segments = token.split('.')
+            const payload = JSON.parse(urlBase64Decode(segments[1]));
+            // console.log(payload);
+            // console.log(urlBase64Decode(token));
+            // console.log(payload)
+            // return resolve({
+            //     jwt: token,
+            //     payload: {}
+            // })
+        }
 
         let requestFactory: any = (baseUri.startsWith('https') ? https : http);
         const purl = url.parse(baseUri + '/account-management/' + tenant + '/tokens')

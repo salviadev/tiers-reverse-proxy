@@ -1,5 +1,6 @@
 import * as  http from 'http';
 import * as  util from 'util';
+import * as  url from 'url';
 import { generateJWt } from './generate-jwt';
 
 
@@ -23,7 +24,10 @@ let html = [
 export function authenticateProxy(hostName: string, path: string, req: http.IncomingMessage, res: http.ServerResponse) {
     let segments = path.split('/');
     if (!segments[0]) segments.shift();
-    generateJWt(hostName, segments[1], 'administrateur', 'salvia').then((jwt) => {
+    let parsedUrl = url.parse(req.url || '', true);
+    let query: any = parsedUrl.query;
+    let token = (query && query.token ? query.token : '');
+    generateJWt(hostName, segments[1], 'administrateur', 'salvia', token).then((jwt) => {
         res.write(util.format(html.join(''), JSON.stringify(jwt)));
         res.end();
     }).catch((e) => {
