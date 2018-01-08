@@ -1,5 +1,5 @@
 {
-    "port": 7500,
+    "port": 7501,
     "target": "http://sercentos1",
-    "password": "salvia"
+    "adminPassword": "salvia"
 }

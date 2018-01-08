@@ -8,11 +8,12 @@ const url = require('url');
 const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer();
 let cfg = {};
-if (fs.existsSync('/config.json')) {
-    let cfg = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
+if (fs.existsSync('./config.json')) {
+    cfg = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
 }
 const port = process.env.PORT || process.env.REVERSE_PROXY_PORT || cfg.port || 7500;
 const host = process.env.REFERENTIEL_TIERS_ADDRESS || cfg.host || 'http://sercentos1';
+const adminPassword = process.env.REFERENTIEL_TIERS_ADMIN_PWD || cfg.adminPassword || 'salvia';
 const routes = ['referentiel-tiers', 'account-management', 'document-collect', 'private'];
 function reverseProxy(route, req, res) {
     proxy.web(req, res, { target: host, changeOrigin: true });
@@ -34,7 +35,7 @@ const server = http.createServer((req, res) => {
         return reverseProxy(routeFound, req, res);
     }
     else if (/^\/authenticate\/.*/.test(path)) {
-        return authenticate_1.authenticateProxy(host, path, req, res);
+        return authenticate_1.authenticateProxy(host, path, req, res, { adminPassword: adminPassword });
     }
     else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });

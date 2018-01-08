@@ -9,12 +9,13 @@ const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer();
 
 let cfg: any = {};
-if (fs.existsSync('/config.json')) {
-    let cfg = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
+if (fs.existsSync('./config.json')) {
+    cfg = JSON.parse(fs.readFileSync('./config.json').toString('utf8'));
 }
 
 const port = process.env.PORT || process.env.REVERSE_PROXY_PORT || cfg.port || 7500;
 const host = process.env.REFERENTIEL_TIERS_ADDRESS || cfg.host || 'http://sercentos1';
+const adminPassword = process.env.REFERENTIEL_TIERS_ADMIN_PWD || cfg.adminPassword || 'salvia';
 
 const routes: string[] = ['referentiel-tiers', 'account-management', 'document-collect', 'private']
 
@@ -42,7 +43,7 @@ const server = http.createServer((req, res) => {
     if (routeFound) {
         return reverseProxy(routeFound, req, res);
     } else if (/^\/authenticate\/.*/.test(path)) {
-        return authenticateProxy(host, path, req, res);
+        return authenticateProxy(host, path, req, res, {adminPassword: adminPassword});
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end(util.format('Not found %s %s.', req.method, path));
