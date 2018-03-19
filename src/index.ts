@@ -28,6 +28,12 @@ proxy.on('proxyRes', function (proxyRes: any, req: http.IncomingMessage, res: ht
     delete proxyRes.headers['x-frame-options'];
 });
 
+proxy.on('proxyReq', function (proxyReq: any, req: any, res: any, options: any) {
+    if (cfg.removeAcceptEncoding)
+        proxyReq.removeHeader('Accept-Encoding');
+});
+
+
 
 const server = http.createServer((req, res) => {
     const uri = req.url || '';
@@ -43,7 +49,7 @@ const server = http.createServer((req, res) => {
     if (routeFound) {
         return reverseProxy(routeFound, req, res);
     } else if (/^\/authenticate\/.*/.test(path)) {
-        return authenticateProxy(host, path, req, res, {adminPassword: adminPassword});
+        return authenticateProxy(host, path, req, res, { adminPassword: adminPassword });
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end(util.format('Not found %s %s.', req.method, path));

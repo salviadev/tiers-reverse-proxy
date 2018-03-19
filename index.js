@@ -21,6 +21,10 @@ function reverseProxy(route, req, res) {
 proxy.on('proxyRes', function (proxyRes, req, res) {
     delete proxyRes.headers['x-frame-options'];
 });
+proxy.on('proxyReq', function (proxyReq, req, res, options) {
+    if (cfg.removeAcceptEncoding)
+        proxyReq.removeHeader('Accept-Encoding');
+});
 const server = http.createServer((req, res) => {
     const uri = req.url || '';
     const path = url.parse(uri).pathname || '';

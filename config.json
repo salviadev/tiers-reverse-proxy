@@ -1,5 +1,6 @@
 {
-    "port": 7501,
-    "host": "http://sercentos1",
-    "adminPassword": "salvia"
+    "port": 7500,
+    "host": "http://10.166.52.120",
+    "adminPassword": "salvia",
+    "removeAcceptEncoding": true
 }
