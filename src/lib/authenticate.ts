@@ -27,7 +27,7 @@ export function authenticateProxy(hostName: string, path: string, req: http.Inco
     let parsedUrl = url.parse(req.url || '', true);
     let query: any = parsedUrl.query;
     let token = (query && query.token ? query.token : '');
-    generateJWt(hostName, segments[1], 'administrateur', pwds.adminPassword, token).then((jwt) => {
+    generateJWt(hostName, segments[1], pwds.adminUser, pwds.adminPassword, token).then((jwt) => {
         res.write(util.format(html.join(''), JSON.stringify(jwt)));
         res.end();
     }).catch((e) => {

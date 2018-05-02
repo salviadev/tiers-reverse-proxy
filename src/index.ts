@@ -16,6 +16,7 @@ if (fs.existsSync('./config.json')) {
 const port = process.env.PORT || process.env.REVERSE_PROXY_PORT || cfg.port || 7500;
 const host = process.env.REFERENTIEL_TIERS_ADDRESS || cfg.host || 'http://sercentos1';
 const adminPassword = process.env.REFERENTIEL_TIERS_ADMIN_PWD || cfg.adminPassword || 'salvia';
+const adminUser = process.env.REFERENTIEL_TIERS_ADMIN || cfg.adminUser || 'administrateur';
 
 const routes: string[] = ['referentiel-tiers', 'account-management', 'document-collect', 'private']
 
@@ -49,7 +50,7 @@ const server = http.createServer((req, res) => {
     if (routeFound) {
         return reverseProxy(routeFound, req, res);
     } else if (/^\/authenticate\/.*/.test(path)) {
-        return authenticateProxy(host, path, req, res, { adminPassword: adminPassword });
+        return authenticateProxy(host, path, req, res, { adminPassword: adminPassword, adminUser: adminUser });
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end(util.format('Not found %s %s.', req.method, path));

@@ -2,5 +2,6 @@
     "port": 7500,
     "host": "http://10.166.52.120",
     "adminPassword": "salvia",
+    "adminUser": "administrateur",
     "removeAcceptEncoding": true
 }
