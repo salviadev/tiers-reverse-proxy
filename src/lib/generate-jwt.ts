@@ -29,14 +29,14 @@ function urlBase64Decode(str: string): string {
 export function generateJWt(baseUri: string, tenant: string, userName: string, password: string, token: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
         if (token) {
-            let segments = token.split('.')
-            const payload = JSON.parse(urlBase64Decode(segments[1]));
-            console.log(payload);
-            //console.log(urlBase64Decode(token));
-            //console.log(payload)
+            // let segments = token.split('.')
+            // const payload = JSON.parse(urlBase64Decode(segments[1]));
+            // console.log(payload);
+            // console.log(urlBase64Decode(token));
+            // console.log(payload)
             return resolve({
-                 jwt: token,
-                 payload: {}
+                jwt: token,
+                payload: {}
             })
         }
 
